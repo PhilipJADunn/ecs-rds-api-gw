@@ -47,6 +47,8 @@ I enjoyed building these resources this way, I have done a lot more serverless u
 
 For the DB itself I went for a serverless postgres build, for this I felt it would suit the workload while being able to scale as required, getting instance sizing correct first time can be a tricky thing to do if you are simply predicting traffic load with no data to back it up. Sizing too small can make for some very unhappy people at a peak time, certainly if it's a Friday. Sizing too large is going to make the billpayer very unhappy aswell.
 
+Data here will be encrypted at rest.
+
 ## CI/CD
 
 My CI/CD experience is mainly in AWS' suite of services but I have recently been enjoying using GitHub Actions as something a little different. cicd.yaml has a role assigned to it with OIDC provider assigned to GitHub, as does terraform.yml. You can create a user and call in their access key via secrets.
@@ -63,6 +65,8 @@ To make this a production ready multi environment service there are some improve
 
 ### Terraform
 Naming conventions to include the environment and service, these are usually saved as variables, e.g "stag-product-function". Just a note here as I am aware that the SNS and SQS names may seem slightly confusing because of this, I tend to name SQS resources as 'upstream service-queuename-downstream service' I find this is a good naming convention and allows people who haven't worked on a service before to understand the workflow quicker.
+
+We should also parameter our S3 bucket for the backend, however, using the data source to pull in account id results in an error for the terraform backend block, so it may be worth just using a variable here.
 
 ### ECS
 
