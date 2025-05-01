@@ -35,6 +35,8 @@ I made the decision at this point to not deploy a NAT GW to save on cost as it w
 
 I opted to build this module myself, I noted a lot of existing modules had networking resources, such as a VPC and subnets so thought best to do this myself, I decided to deploy into a public subnet and fronted requests with an ALB. The reasoning was additionally configuration being required in private subnets via VPC Endpoints. For public subnets I assigned a public IP to tasks otherwise we get failures to ECR.
 
+If we need to log into a container we can do via ECS Exec. One of the reasons for choosing fargate over EC2 here was because it includes all the requirements to use ECS Exec, just need to make sure running Platform Version 1.4 - https://aws.amazon.com/blogs/containers/aws-fargate-platform-versions-primer/
+
 For the code here I dig some digging into the AWS SDK for SNS - https://docs.aws.amazon.com/code-library/latest/ug/python_3_sns_code_examples.html
 
 I've also called in an ASG module that will scale on CPU.
@@ -73,6 +75,8 @@ We should also parameter our S3 bucket for the backend, however, using the data 
 ### ECS
 
 We would deploy into private subnets and use VPCEs. Instead of exposing the ALB URL we would deploy a domain name via Route 53 and an ACM cert to secure the traffic over 443 to the ALB. We would also configure container logging.
+
+We would also deploy Cognito if we didn't want to authenticate within ECS. Currently the ALB is locked down to my IP but authenticating 3rd parties who may use this in the future via IP is not considered best practice.
 
 ### CI/CD
 
