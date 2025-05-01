@@ -35,7 +35,7 @@ I made the decision at this point to not deploy a NAT GW to save on cost as it w
 
 I opted to build this module myself, I noted a lot of existing modules had networking resources, such as a VPC and subnets so thought best to do this myself, I decided to deploy into a public subnet and fronted requests with an ALB. The reasoning was additionally configuration being required in private subnets via VPC Endpoints. For public subnets I assigned a public IP to tasks otherwise we get failures to ECR.
 
-For the code here I dig some digging into the AWS SDK for SNS.
+For the code here I dig some digging into the AWS SDK for SNS - https://docs.aws.amazon.com/code-library/latest/ug/python_3_sns_code_examples.html
 
 I've also called in an ASG module that will scale on CPU.
 
@@ -44,6 +44,8 @@ I've also called in an ASG module that will scale on CPU.
 Here we have our serverless resources. I opted to group all of these together under one module mainly due to security between Lambda Environment variables and the secrets required to connect to the database (more about improvements there later on). Calling in username/password and host id in plaintext, with the details of such sat in a statefile was something I wished to avoid.
 
 I enjoyed building these resources this way, I have done a lot more serverless using CloudFormation than Terraform over the years when it comes to SNS/SQS and Lambda. Resolving secrets is something CloudFormation does easier than TF in this regard as it happens.
+
+For the function code I used this AWS article - https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-lambda-tutorial.html
 
 For the DB itself I went for a serverless postgres build, for this I felt it would suit the workload while being able to scale as required, getting instance sizing correct first time can be a tricky thing to do if you are simply predicting traffic load with no data to back it up. Sizing too small can make for some very unhappy people at a peak time, certainly if it's a Friday. Sizing too large is going to make the billpayer very unhappy aswell.
 
@@ -77,6 +79,14 @@ We would deploy into private subnets and use VPCEs. Instead of exposing the ALB 
 We could build and tag images with the commit SHA instead of latest and we could also use env vars for the region and IAM Role.
 
 A blue/green deployment to send 10% of traffic for 10 minutes to a new task before switching over could also be implemented.
+
+### Logging
+
+While we have a couple of CW alarms for our ASG, we would want more alarms so we can monitor our services, for the ALB we would likely want to see 5XX and 4XX errors. HealthyHostCount being another. For ECS we have CPUUtilization but we may want to include MemoryUtilization and RunningTaskCount. SQS we want an alarm setting up if the DLQ is filling with messages. For the Lambda we can set a metric if we get x% of errors within a certain time period. For Aurora Serverless Postgres DB we should have CPUUtilization and ACUUtilization.
+
+Of course there are others aswell but these are the first that spring to mind. We should implement our service with Grafana and Dynatrace aswell for example, so we can gain some better insights over time. I tend to keep some monitoring dashboards open during deployment, this can help me quickly see if we have an issue and roll back.
+
+We would also set these alarms up with alerts, we can use SNS to send to slack to notify us during working hours, and Pagerduty/Incident.io.
 
 ### Disclaimer
 
