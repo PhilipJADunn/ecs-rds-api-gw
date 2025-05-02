@@ -20,7 +20,7 @@ I have created a new user so we are not using root user privileges. This image w
 
 ## Terraform
 
-I Will outline how I have built Terraform here and below with each module specifically, I opted for modules for reusability and maintainability. You'll note that we don't have a parent/child module setup, while I do like this setup as it makes using outputs and data easier there are also drawbacks, such as a complexity, if you aren't careful then these can get complex quite quickly where you can end up creating a dependency that may cause some issues down the line. 
+I Will outline how I have built Terraform here and below with each module specifically, I opted for modules for reusability and maintainability. You'll note that we don't have a parent/child module setup, while I do like this setup as it makes using outputs and data easier there are also drawbacks, such as complexity, if you aren't careful then these can get complex quite quickly where you can end up creating a dependency that may cause some issues down the line. 
 
 terraform_remote_state can be very useful for pulling in the information required.
 
@@ -33,7 +33,7 @@ I made the decision at this point to not deploy a NAT GW to save on cost as it w
 
 ## ECS
 
-I opted to build this module myself, I noted a lot of existing modules had networking resources, such as a VPC and subnets so thought best to do this myself, I decided to deploy into a public subnet and fronted requests with an ALB. The reasoning was additionally configuration being required in private subnets via VPC Endpoints. For public subnets I assigned a public IP to tasks otherwise we get failures to ECR.
+I opted to build this module myself, I noted a lot of existing modules had networking resources, such as a VPC and subnets so thought best to do this myself, I decided to deploy into a public subnet and fronted requests with an ALB. The reasoning was additional configuration being required in private subnets via VPC Endpoints. For public subnets I assigned a public IP to tasks otherwise we get failures to ECR.
 
 If we need to log into a container we can do via ECS Exec. One of the reasons for choosing fargate over EC2 here was because it includes all the requirements to use ECS Exec, just need to make sure running Platform Version 1.4 - https://aws.amazon.com/blogs/containers/aws-fargate-platform-versions-primer/
 
@@ -61,7 +61,7 @@ I have a script here in cicd.yaml to grab an SNS Topic ARN and insert it into ap
 
 Finally we update our task def and deploy it.
 
-Terraform is deployed when there are changes to any file within iac/terraform, we have a dependency here for the DB to speak to the DB via psycopg2 so we package this up here. From there we run checks on each module to see if there are any changes and deploys them.
+Terraform is deployed when there are changes to any file within iac/terraform, we have a dependency here for the Lambda to speak to the DB via psycopg2 so we package this up here. From there we run checks on each module to see if there are any changes and deploys them.
 
 ## Improvements for a production environment
 
@@ -94,4 +94,4 @@ We would also set these alarms up with alerts, we can use SNS to send to slack t
 
 ### Disclaimer
 
-I have not fully tested this as of when you have received the zip file, it does however deploy into ECS and terraform deploys locally. I look forward to discussing this with you on Friday.
+I have not fully tested this as of when you have received the link to this project, it does however deploy into ECS and terraform deploys locally. I look forward to discussing this with you on Friday.
