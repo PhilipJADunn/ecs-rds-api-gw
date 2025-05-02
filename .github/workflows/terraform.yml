@@ -8,6 +8,9 @@ on:
 jobs:
   package:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -18,7 +21,7 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::658251713809:role/github-actions-ecs-rds-role
+          role-to-assume: arn:aws:iam::658251713809:role/github-actions-terraform-role
           aws-region: eu-west-1
       - name: Set up environment
         run: |
