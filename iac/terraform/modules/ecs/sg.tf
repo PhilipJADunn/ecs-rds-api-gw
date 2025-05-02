@@ -1,6 +1,6 @@
 resource "aws_security_group" "alb" {
   name        = "alb-sg"
-  description = "controls access to the Application Load Balancer (ALB)"
+  description = "controls access to the Application Load Balancer (ALB) - test"
   vpc_id      = var.vpc_id
 
   ingress {
