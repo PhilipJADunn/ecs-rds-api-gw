@@ -37,6 +37,8 @@ I opted to build this module myself, I noted a lot of existing modules had netwo
 
 If we need to log into a container we can do via ECS Exec. One of the reasons for choosing fargate over EC2 here was because it includes all the requirements to use ECS Exec, just need to make sure running Platform Version 1.4 - https://aws.amazon.com/blogs/containers/aws-fargate-platform-versions-primer/
 
+We also require some IAM permissions configuring as outlined here - https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html#ecs-exec-required-iam-permissions
+
 For the code here I dig some digging into the AWS SDK for SNS - https://docs.aws.amazon.com/code-library/latest/ug/python_3_sns_code_examples.html
 
 I've also called in an ASG module that will scale on CPU.
